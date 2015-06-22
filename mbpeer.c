@@ -29,6 +29,14 @@ void failure ( char *comment ) {
 //	Packing and unpacking
 //	********************************************************************************
 
+struct mbJob {
+	double x;
+	double dx;
+	double y;
+	double dy;
+	long resolution;
+};
+
 void pack_and_send ( void *s, char *identifier, long value, int flags ) {
 	static char buffer[1024];
 	sprintf(buffer,"%s %ld",identifier,value);
@@ -93,13 +101,15 @@ void mbtest () {
 void mbpeer_worker ( int ac, char **av ) {
 	if (ac < 5) failure("dispatch needs: <x> <dx> <y> <dy> <resolution>");
 
-	double x; sscanf(av[0],"%lf",&x);
-	double dx; sscanf(av[1],"%lf",&dx);
-	double y; sscanf(av[2],"%lf",&y);
-	double dy; sscanf(av[3],"%lf",&dy);
-	long resolution; sscanf(av[4],"%ld",&resolution);
+	struct mbJob job;
+	sscanf(av[0],"%lf",&job.x);
+	sscanf(av[1],"%lf",&job.dx);
+	sscanf(av[2],"%lf",&job.y);
+	sscanf(av[3],"%lf",&job.dy);
+	sscanf(av[4],"%ld",&job.resolution);
 
-	printf("worker: got x=%f, dx=%f, y =%f, dy=%f, resolution=%ld\n",x,dx,y,dy,resolution);
+	printf("dispatch: got x=%f, dx=%f, y =%f, dy=%f, resolution=%ld\n",
+		job.x,job.dx,job.y,job.dy,job.resolution);
 
 	void *context = zmq_ctx_new();
 
@@ -112,13 +122,15 @@ void mbpeer_worker ( int ac, char **av ) {
 void mbpeer_dispatch ( int ac, char **av ) {
 	if (ac < 5) failure("dispatch needs: <x> <dx> <y> <dy> <resolution>");
 
-	double x; sscanf(av[0],"%lf",&x);
-	double dx; sscanf(av[1],"%lf",&dx);
-	double y; sscanf(av[2],"%lf",&y);
-	double dy; sscanf(av[3],"%lf",&dy);
-	long resolution; sscanf(av[4],"%ld",&resolution);
+	struct mbJob job;
+	sscanf(av[0],"%lf",&job.x);
+	sscanf(av[1],"%lf",&job.dx);
+	sscanf(av[2],"%lf",&job.y);
+	sscanf(av[3],"%lf",&job.dy);
+	sscanf(av[4],"%ld",&job.resolution);
 
-	printf("dispatch: got x=%f, dx=%f, y =%f, dy=%f, resolution=%ld\n",x,dx,y,dy,resolution);
+	printf("dispatch: got x=%f, dx=%f, y =%f, dy=%f, resolution=%ld\n",
+		job.x,job.dx,job.y,job.dy,job.resolution);
 
 	void *context = zmq_ctx_new();
 
